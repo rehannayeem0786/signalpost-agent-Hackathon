@@ -114,6 +114,7 @@ python -m pytest tests -q        # 168 passed: contract + gates + security + fea
 
 ## Refresh & reproducibility
 
+
 Re-running the same snapshot is idempotent: content-addressed SQLite snapshots
 + change idempotency keys mean a refresh **never creates duplicate records or
 false changes**, preserves prior evidence, and exposes material changes with
@@ -136,17 +137,4 @@ requirements.txt            91 pinned dependencies (audit-clean)
 .env.example                environment template (real .env is gitignored)
 ```
 
-## Submission checklist (submit@builderr.ai)
-
-- [x] Repository URL: https://github.com/rehannayeem0786/signalpost-agent-Hackathon
-- [x] Exact commit hash: `git rev-parse HEAD` (use the pushed HEAD)
-- [x] 100-company smoke-test report: `reports/smoke-100/report.json`
-- [x] One run command: see above
-- [x] Models/APIs: Groq/OpenRouter (synthesis only, optional), Brreg NLOD 2.0,
-      Google News RSS — deterministic fallback with no keys
-- [x] Expected cost per official batch: ≈ $0.00 (no keys) / ≈ $1.40 per 1,000
-- [ ] Agent name + contact for results (fill in the email)
-
-Revisions: initial version + up to four revised commit hashes by **18 Oct 2026**
-(five versions total). Qualification: official run ≥ **65/100**.
 
