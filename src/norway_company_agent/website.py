@@ -117,6 +117,96 @@ def guess_website_candidates(name: str | None, *, limit: int = 2) -> list[str]:
     return candidates[:limit]
 
 
+CAREERS_PATH_RE = re.compile(r"career|karriere|jobb|jobs|stilling|stillingen|ledige", re.I)
+JOB_TITLE_RE = re.compile(
+    r"(stilling|søkes|seeking|jobb|karriere|career|ansatt|tekniker|selger|"
+    r"operatør|operator|manager|engineer|developer|konsulent|rådgiver|advisor|"
+    r"controller|regnskaps|lager|sjåfør|mekaniker|montør|revisor|"
+    r"accountant|nurse|teacher|student|sommerjobb|vikar|lead|specialist)",
+    re.I,
+)
+
+
+def extract_job_postings(html: str, base_url: str, *, limit: int = 12) -> list[dict[str, str]]:
+    """Pure extraction of job-posting anchors from a careers page. No network."""
+    soup = BeautifulSoup(html, "lxml")
+    seen: set[tuple[str, str]] = set()
+    postings: list[dict[str, str]] = []
+    for anchor in soup.select("a[href]"):
+        title = " ".join(anchor.get_text(" ", strip=True).split())
+        href = str(anchor.get("href") or "")
+        if not title or not (10 <= len(title) <= 160):
+            continue
+        if not JOB_TITLE_RE.search(title):
+            continue
+        url = urllib.parse.urljoin(base_url, href)
+        parsed = urllib.parse.urlparse(url)
+        if parsed.scheme not in {"http", "https"}:
+            continue
+        key = (title.casefold(), url)
+        if key in seen:
+            continue
+        seen.add(key)
+        postings.append({"title": title, "url": url})
+        if len(postings) >= limit:
+            break
+    return postings
+
+
+def find_careers_url(value: dict[str, Any]) -> str | None:
+    """First same-site careers link discovered on the gated site."""
+    for page in value.get("pages") or []:
+        url = str(page.get("url") or "")
+        if CAREERS_PATH_RE.search(url):
+            return url
+    return None
+
+
+def fetch_careers_page(value: dict[str, Any], *, timeout: float = 12.0) -> dict[str, Any]:
+    """Fetch the discovered careers page (robots + SSRF guarded) and extract postings."""
+    from .evidence import evidence as _evidence
+
+    careers_url = find_careers_url(value)
+    if not careers_url:
+        return _evidence("careers", "not_found", "company_owned_careers", "",
+                         note="No careers link discovered on the verified site")
+    try:
+        assert_public_url(careers_url)
+        if not _robots_allowed(careers_url, timeout):
+            return _evidence("careers", "blocked", "company_owned_careers", careers_url,
+                             note="robots.txt disallows this user agent")
+        request = urllib.request.Request(careers_url, headers={
+            "User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"})
+        response, insecure = _open(request, timeout, allow_insecure_tls=True)
+        with response:
+            raw = response.read(1_000_000 + 1)
+            content_type = response.headers.get("content-type", "")
+            final_url = response.geturl()
+            assert_public_url(final_url)
+        if len(raw) > 1_000_000:
+            return _evidence("careers", "blocked", "company_owned_careers", careers_url,
+                             note="Careers page exceeds byte limit")
+        if "html" not in content_type.lower():
+            return _evidence("careers", "source_error", "company_owned_careers", careers_url,
+                             note=f"Unsupported content type: {content_type}")
+        html = raw.decode("utf-8", errors="replace")
+        postings = extract_job_postings(html, final_url)
+        content_sha = __import__("hashlib").sha256(raw).hexdigest()
+        note = "Company-owned careers page; postings are company-controlled claims"
+        if insecure:
+            note += "; retrieved with insecure TLS fallback"
+        if not postings:
+            return _evidence("careers", "not_found", "company_owned_careers", final_url,
+                             content_sha256=content_sha, note="No job-posting links matched the extraction rules")
+        return _evidence("careers", "available", "company_owned_careers", final_url,
+                         value={"careers_url": final_url, "postings": postings},
+                         content_sha256=content_sha, note=note)
+    except Exception as exc:
+        return _evidence("careers", "source_error", "company_owned_careers", careers_url,
+                         note=f"{type(exc).__name__}: {str(exc)[:160]}")
+
+
+
 
 def _registered_domain(url: str) -> str:
     parsed = urllib.parse.urlparse(url)

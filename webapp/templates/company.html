@@ -19,6 +19,24 @@
   {% if profile.municipality %} · {{ profile.municipality }}{% endif %}
   <span class="badge {{ profile._status or 'available' }}">{{ profile._status or 'available' }}</span></p>
 
+<div class="card">
+  <div class="coverrow">
+    <strong>Coverage:</strong> {{ profile._coverage.done }}/{{ profile._coverage.total }} information families
+    {% if profile._identity_gate and profile._identity_gate.publishable %}
+      <span class="badge available">✓ exact-entity verified · gate {{ '%.2f'|format(profile._identity_gate.score) }}</span>
+    {% elif profile._identity_gate %}
+      <span class="badge ambiguous">site withheld by gate</span>
+    {% endif %}
+    <a class="btn" href="/companies/{{ profile.organisation_number }}/envelope.json">⤓ Download envelope JSON</a>
+  </div>
+  <div class="meter"><span style="width: {{ (profile._coverage.done * 100 // profile._coverage.total) }}%"></span></div>
+  <div class="chips">
+    {% for f in profile._coverage.families %}
+      <span class="chip {{ 'ok' if f.ok else 'off' }}">{{ '✓' if f.ok else '—' }} {{ f.name }}</span>
+    {% endfor %}
+  </div>
+</div>
+
 {% if profile._brief %}
 <div class="card"><strong>Decision-useful brief</strong><p>{{ profile._brief }}</p></div>
 {% endif %}
@@ -72,13 +90,22 @@
 {% else %}<p class="muted">No registered role records.</p>{% endif %}
 
 <h2>Working here</h2>
-{% set subs = profile._claims | selectattr("field", "equalto", "registered_subunit") | list %}
+{% set jobs = profile._claims | selectattr("field", "equalto", "job_posting") | selectattr("availability", "equalto", "available") | list %}
 <table>
   <tr><th>Item</th><th>Value</th><th>State</th><th>Evidence</th></tr>
-  {% for c in profile._claims if c.field in ("careers_page","news_page") %}
-  <tr><td>{{ c.field }}</td><td>{% if c.value %}<a href="{{ c.value }}" rel="noopener noreferrer">{{ c.value }}</a>{% else %}<em>not available</em>{% endif %}</td>
+  {% for c in profile._claims if c.field in ("careers_page","news_page","registered_workforce") %}
+  <tr><td>{{ c.field }}</td><td>{% if c.value is not none %}{{ c.value }}{% else %}<em>not available</em>{% endif %}</td>
       <td><span class="badge {{ c.availability }}">{{ c.availability }}</span></td><td>{{ src(c.evidence_ids) }}</td></tr>
   {% endfor %}
+  {% for c in jobs %}
+  <tr><td>open position</td><td>{% if c.value.url %}<a href="{{ c.value.url }}" rel="noopener noreferrer">{{ c.value.title }}</a>{% else %}{{ c.value.title }}{% endif %}</td>
+      <td><span class="badge available">available</span></td><td>{{ src(c.evidence_ids) }}</td></tr>
+  {% endfor %}
+  {% for c in profile._claims if c.field == "job_posting" and c.availability != "available" %}
+  <tr><td>open position</td><td><em>{{ c.availability }}</em></td>
+      <td><span class="badge {{ c.availability }}">{{ c.availability }}</span></td><td>{{ src(c.evidence_ids) }}</td></tr>
+  {% endfor %}
+  {% set subs = profile._claims | selectattr("field", "equalto", "registered_subunit") | list %}
   {% for c in subs %}
   <tr><td>registered_subunit</td><td>{{ c.value.name }} — {{ c.value.address }}</td>
       <td><span class="badge {{ c.availability }}">{{ c.availability }}</span></td><td>{{ src(c.evidence_ids) }}</td></tr>

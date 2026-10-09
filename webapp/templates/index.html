@@ -1,16 +1,28 @@
 {% extends "base.html" %}
 {% block title %}Workspace — Signalpost{% endblock %}
 {% block content %}
-<h1>Company research workspace</h1>
-<p class="sub">Give it a Norwegian organisation number. It returns facts, links each fact to a source,
-   and keeps the profile current.</p>
+<section class="hero">
+  <h1>Find company information.<br>See the source for every fact.</h1>
+  <p>Enter a Norwegian organisation number. The agent researches official records, financials,
+     leadership, locations, the verified website and dated public activity — and links
+     <em>every fact</em> to its source, retrieval time and reporting period.</p>
+  <div class="steps3">
+    <div class="stepcard"><strong>1 · Enter</strong>A 9-digit organisation number. The agent never picks its own companies.</div>
+    <div class="stepcard"><strong>2 · Research</strong>7 evidence families behind an exact-entity gate — wrong companies are never published.</div>
+    <div class="stepcard"><strong>3 · Verify</strong>Click any source, download the raw envelope, re-run to see what changed.</div>
+  </div>
+  <p class="samples">Try:
+    <a href="/?org=810034882">SANDNES ELEKTRISKE AS</a> ·
+    <a href="/?org=810324562">SERVI GROUP AS</a> ·
+    <a href="/?org=810412402">STOREBRAND TILLERTORGET AS</a></p>
+</section>
 
 <div class="card">
   <form method="post" action="/research">
     <input type="hidden" name="csrf" value="{{ csrf }}">
     <label for="org">Organisation number (9 digits)</label>
     <input id="org" name="organisation_number" type="text" inputmode="numeric" pattern="\d{9}"
-           placeholder="810034882" required maxlength="9">
+           placeholder="810034882" value="{{ prefill }}" required maxlength="9">
     <p><button type="submit">Research company</button></p>
   </form>
   {% if not user %}

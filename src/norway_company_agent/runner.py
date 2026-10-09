@@ -29,7 +29,7 @@ from .official import fetch_official_modules
 from .refresh import diff_profile
 from .synth import synthesize
 from .universe import profiles_from_universe
-from .website import fetch_website, guess_website_candidates
+from .website import fetch_careers_page, fetch_website, guess_website_candidates
 
 DEFAULT_MODULES = "registry,accounting_obligation,registry_live,financials,financial_history,roles,group,locations,website,news"
 HARNESS_STATES = {"available", "not_available", "blocked", "not_applicable", "ambiguous", "failed"}
@@ -145,8 +145,17 @@ def enrich_company(
     *,
     offline: bool = False,
     news_limit: int = 10,
+    progress: Any = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Fetch live sources for one company. Errors are captured, never raised."""
+
+    def _tick(step: str) -> None:
+        if progress is not None:
+            try:
+                progress(step)
+            except Exception:
+                pass
+
     org = profile["organisation_number"]
     fetch_modules = {m for m in modules if m in
                      {"registry_live", "financials", "financial_history", "roles", "group", "locations"}}
@@ -158,6 +167,7 @@ def enrich_company(
         return profile, {"requests": 0, "latencies_ms": [], "third_party_cost_usd": 0.0}
 
     if fetch_modules:
+        _tick("official")
         try:
             records, metrics = fetch_official_modules(org, fetch_modules)
             profile["evidence"].update(records)
@@ -170,6 +180,7 @@ def enrich_company(
                 note=f"fetch_official_modules: {traceback.format_exc(limit=1)}"[:300])
 
     if "website" in modules:
+        _tick("website")
         website_url = profile.get("website")
         try:
             if website_url:
@@ -202,7 +213,28 @@ def enrich_company(
                 "website", "source_error", "registry_linked_company_website",
                 str(website_url or ""), note=f"website: {traceback.format_exc(limit=1)}"[:300])
 
+    if "website" in modules:
+        # Deepen the "Working here" family: fetch the discovered careers page
+        # (robots + SSRF guarded) and extract job-posting links — only when the
+        # site already passed the exact-entity gate.
+        website_record = profile["evidence"].get("website") or {}
+        website_value = website_record.get("value") or {}
+        gate = website_value.get("identity_assessment") or {}
+        if website_record.get("status") == "available" and gate.get("publishable"):
+            try:
+                careers_record = fetch_careers_page(website_value)
+                profile["evidence"]["careers"] = careers_record
+                if careers_record.get("status") != "not_applicable":
+                    requests += 1  # robots probe (+1 more when the page was fetched)
+                if careers_record.get("status") == "available":
+                    requests += 1
+            except Exception:
+                profile["evidence"]["careers"] = evidence(
+                    "careers", "source_error", "company_owned_careers", "",
+                    note=f"careers: {traceback.format_exc(limit=1)}"[:300])
+
     if "news" in modules:
+        _tick("news")
         try:
             profile["evidence"]["news"] = fetch_news(profile, limit=news_limit)
             requests += 1
@@ -242,19 +274,38 @@ def research_company(
     started_at: str,
     offline: bool = False,
     use_llm: bool = True,
+    progress: Any = None,
 ) -> dict[str, Any]:
-    """Research one company end to end and return its terminal envelope."""
+    """Research one company end to end and return its terminal envelope.
+
+    ``progress`` is an optional callable invoked as ``progress(step)`` after
+    each stage (identity, official, website, news, synthesis) — used by the web
+    layer to show live progress. It must never raise.
+    """
     company_started = time.monotonic()
     errors: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {"requests": 0, "latencies_ms": [], "third_party_cost_usd": 0.0}
+
+    def _tick(step: str) -> None:
+        if progress is not None:
+            try:
+                progress(step)
+            except Exception:
+                pass
+
     try:
-        profile, metrics = enrich_company(profile, modules, offline=offline)
+        _tick("identity")
+        profile, metrics = enrich_company(profile, modules, offline=offline, progress=progress)
+        _tick("claims")
         claims, _ = build_claims(profile)
         if use_llm and not profile.get("_identity_unresolved"):
+            _tick("synthesis")
             synthesis, cost = synthesize(profile, claims)
             synthesis["retrieved_at"] = utc_now()
             profile["evidence"]["synthesis"] = synthesis
             metrics["third_party_cost_usd"] = cost
+        else:
+            metrics.setdefault("third_party_cost_usd", 0.0)
     except Exception:
         errors.append({"module": "research", "error": traceback.format_exc(limit=2)[:500]})
         metrics = {"requests": 0, "latencies_ms": [], "third_party_cost_usd": 0.0}

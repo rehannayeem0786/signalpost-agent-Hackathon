@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Researching {{ org }} — Signalpost{% endblock %}
+{% block head %}
+  {% if job.status in ('queued', 'running') %}<meta http-equiv="refresh" content="2">{% endif %}
+  {% if job.status == 'completed' %}<meta http-equiv="refresh" content="1; url={{ next_url }}">{% endif %}
+{% endblock %}
+{% block content %}
+<h1>{{ 'Refreshing' if job.kind == 'refresh' else 'Researching' }} <span class="mono">{{ org }}</span></h1>
+<p class="sub">
+  Job <span class="mono">{{ job.job_id }}</span> ·
+  <span class="badge {{ 'available' if job.status == 'completed' else ('blocked' if job.status == 'failed' else 'not_applicable') }}">{{ job.status }}</span>
+  · started {{ job.created_at }}
+</p>
+
+{% if job.status == 'failed' %}
+<p class="errorbox">The run failed ({{ error or 'unknown error' }}). No partial data was stored —
+   the previous supported values (if any) were preserved. You can try again from the workspace.</p>
+<p><a href="/?org={{ org }}">← Back to workspace</a></p>
+{% else %}
+<div class="card">
+  <h2 style="margin-top:0">Research pipeline</h2>
+  <ol class="steps">
+    {% for key, label in steps %}
+      {% if job.status == 'completed' %}
+        <li class="step done">✓ {{ label }}</li>
+      {% elif loop.index0 < current_index %}
+        <li class="step done">✓ {{ label }}</li>
+      {% elif loop.index0 == current_index %}
+        <li class="step active">● {{ label }} <span class="muted">…working</span></li>
+      {% else %}
+        <li class="step">○ {{ label }}</li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+  {% if job.status in ('queued', 'running') %}
+  <p class="muted">This page refreshes every 2 seconds — no need to reload. Usually 10–30 seconds.</p>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

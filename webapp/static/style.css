@@ -49,3 +49,31 @@ th { background: #eef4fa; }
 footer { border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; padding: 14px 16px; text-align: center; background: #fff; }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 form.card { max-width: 460px; }
+
+/* --- judge-facing UI --- */
+.hero { background: linear-gradient(135deg, #0b2239 0%, #0b5fa5 100%); color: #fff;
+        border-radius: 14px; padding: 34px 30px 22px; margin: 6px 0 18px; }
+.hero h1 { color: #fff; font-size: 1.9rem; line-height: 1.25; margin: 0 0 10px; }
+.hero p { color: #d7e6f5; max-width: 760px; margin: 0 0 16px; }
+.hero a { color: #ffd479; }
+.steps3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+          gap: 10px; margin: 14px 0 10px; }
+.stepcard { background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.25);
+            border-radius: 10px; padding: 10px 12px; font-size: .9rem; color: #eaf3fb; }
+.stepcard strong { display: block; color: #fff; margin-bottom: 4px; }
+.samples { font-size: .9rem; margin: 8px 0 0; }
+.meter { background: #e6edf4; border-radius: 999px; height: 12px; margin: 10px 0 8px; overflow: hidden; }
+.meter span { display: block; height: 100%; background: linear-gradient(90deg, #0e7a45, #16a34a); border-radius: 999px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: .78rem; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.chip.ok { background: #e3f5ec; border-color: #b7e4cd; color: var(--ok); }
+.chip.off { background: #f1f3f5; }
+.coverrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-block; background: var(--ink); color: #fff !important; text-decoration: none;
+       padding: 7px 14px; border-radius: 7px; font-size: .88rem; margin-left: auto; }
+.btn:hover { filter: brightness(1.2); }
+ol.steps { list-style: none; padding: 0; margin: 0; }
+ol.steps li { padding: 8px 10px; border-left: 3px solid var(--line); margin: 4px 0 4px 6px; color: var(--muted); }
+ol.steps li.done { border-left-color: var(--ok); color: var(--ink); }
+ol.steps li.active { border-left-color: var(--accent); color: var(--ink); font-weight: 600;
+                     background: #eef4fa; border-radius: 0 8px 8px 0; }

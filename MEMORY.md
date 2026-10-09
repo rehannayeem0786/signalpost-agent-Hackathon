@@ -81,16 +81,18 @@ mismatch makes the run unofficial).
 
 ## 7. Next moves (ranked by expected recall gain)
 
-1. **Careers depth**: crawl `/career|karriere|jobb|stilling` links found on
-   gated sites; extract posting titles/dates → "Working here" family.
-2. **News for notable companies**: keep gate; add `publisher` + date filters;
-   consider RSS `when:1y` + `site:`-free query variants A/B on dev set.
-3. **Underenheter employees** merge into workforce claim (official subunits
-   already carry `employees` — currently only surfaced as subunit rows).
-4. **financial_history years → per-year revenue claims** (family depth).
-5. **Brave discovery** behind `BRAVE_API_KEY` (transient, per source policy)
-   for the ~93% of companies without registry websites — biggest single lever.
-6. If GROQ key arrives: set `LLM_PROVIDER=groq`, re-run smoke, compare briefs.
+1. **Brave discovery** — get a free key (brave.com/search/api), add
+   `BRAVE_API_KEY=…` to .env, then wire the v2 connector. Biggest single
+   remaining lever: ~93% of companies have no registry website.
+2. ~~Careers depth~~ ✅ done (v1.1): gated careers pages → `job_posting` claims;
+   ~~workforce sum from subunits~~ ✅ done (`registered_workforce`).
+3. **financial_history years → per-year revenue claims** (family depth).
+4. **fagfolkguiden reviews connector** (ratings family, sanctioned experiment).
+5. **1,000-company local test** before final submission (encouraged by brief).
+6. **Submission timing**: email v1 now; 4 revision hashes left (freeze **18 Oct**);
+   the 18-Oct community-vote award favors the demo-ready product — jobs with
+   live progress, coverage meter, gate badges, envelope export and the hero
+   landing page are all shipped for it.
 
 ## 8. Submission state
 

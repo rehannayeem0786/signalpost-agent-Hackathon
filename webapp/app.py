@@ -11,6 +11,7 @@ limits apply to credential and research endpoints.
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import re
@@ -29,7 +30,7 @@ from dotenv import load_dotenv
 load_dotenv()  # load .env from the repo root (never overrides existing env vars)
 
 from norway_company_agent.news import fetch_news  # noqa: F401 (kept for parity checks)
-from norway_company_agent.runner import research_company
+from norway_company_agent.runner import build_envelope, research_company  # noqa: F401
 from norway_company_agent.store import Store
 from norway_company_agent.refresh import diff_profile
 from norway_company_agent.website import assert_public_url
@@ -234,8 +235,12 @@ def create_app() -> FastAPI:
         user = current_user(request)
         _ensure_sid(response, request)
         recent = store.list_profiles(user["tenant_id"], limit=20) if user else []
+        prefill = request.query_params.get("org", "")
+        if not ORG_RE.match(prefill):
+            prefill = ""
         return templates.TemplateResponse(request, "index.html", {
-            "user": user, "recent": recent, "csrf": _csrf_of(request), "flash": request.query_params.get("msg"),
+            "user": user, "recent": recent, "csrf": _csrf_of(request),
+            "flash": request.query_params.get("msg"), "prefill": prefill,
         })
 
     @app.get("/companies/{organisation_number}", response_class=HTMLResponse)
@@ -257,6 +262,23 @@ def create_app() -> FastAPI:
         return templates.TemplateResponse(request, "company.html", {
             "user": user, "csrf": _csrf_of(request), "profile": profile, "changes": changes,
         })
+
+    @app.get("/companies/{organisation_number}/envelope.json", response_class=JSONResponse)
+    def envelope_export(request: Request, organisation_number: str):
+        """One-click export of the exact competition envelope for this profile."""
+        user = require_user(request)
+        if not ORG_RE.match(organisation_number):
+            raise HTTPException(status_code=400, detail="Organisation number must be exactly 9 digits.")
+        profile = store.get_profile(user["tenant_id"], organisation_number)
+        if not profile:
+            raise HTTPException(status_code=404, detail="No profile for this company in your workspace.")
+        envelope = build_envelope(
+            profile, run_id="export", modules=list(MODULES),
+            started_at=envelope_now(), completed_at=envelope_now(),
+            requests=0, runtime_ms=0, third_party_cost_usd=0.0, errors=[])
+        return JSONResponse(
+            content=envelope,
+            headers={"Content-Disposition": f'attachment; filename="envelope-{organisation_number}.json"'})
 
     @app.get("/search", response_class=HTMLResponse)
     def search(request: Request, response: Response, q: str = ""):
@@ -280,18 +302,12 @@ def create_app() -> FastAPI:
             return _page_error(request, user, 400, "Organisation number must be exactly 9 digits.")
         job_id = "job-" + secrets.token_urlsafe(8)
         store.create_job(user["tenant_id"], job_id, "research")
-        try:
-            envelope = research_company(
-                _seed_profile(org), list(MODULES),
-                run_id=job_id, started_at=envelope_now(), offline=False, use_llm=True)
-            store.upsert_profile(user["tenant_id"], envelope["profile"])
-            store.update_job(user["tenant_id"], job_id, "completed", envelope.get("status"))
-        except Exception as exc:
-            logger.warning("research failed for org=%s error=%s", org, type(exc).__name__)
-            store.update_job(user["tenant_id"], job_id, "failed", type(exc).__name__)
-            return _page_error(request, user, 500,
-                               "Research failed for this company; no partial data was stored.")
-        return _redirect_with_session(f"/companies/{org}?msg=researched", user)
+        store.update_job(user["tenant_id"], job_id, "queued",
+                         json.dumps({"org": org, "next": f"/companies/{org}?msg=researched"}))
+        thread = threading.Thread(target=_run_job, args=(user["tenant_id"], job_id, org, "research"),
+                                  daemon=True)
+        thread.start()
+        return _redirect_with_session(f"/jobs/{job_id}", user)
 
     @app.post("/refresh", response_class=HTMLResponse)
     def refresh(request: Request,
@@ -307,22 +323,33 @@ def create_app() -> FastAPI:
             return _page_error(request, user, 404, "Nothing to refresh: research the company first.")
         job_id = "job-" + secrets.token_urlsafe(8)
         store.create_job(user["tenant_id"], job_id, "refresh")
+        store.update_job(user["tenant_id"], job_id, "queued",
+                         json.dumps({"org": org, "next": f"/companies/{org}?msg=refreshed"}))
+        thread = threading.Thread(target=_run_job, args=(user["tenant_id"], job_id, org, "refresh"),
+                                  daemon=True)
+        thread.start()
+        return _redirect_with_session(f"/jobs/{job_id}", user)
+
+    @app.get("/jobs/{job_id}", response_class=HTMLResponse)
+    def job_status(request: Request, job_id: str, response: Response):
+        user = require_user(request)
+        _ensure_sid(response, request)
+        # Row-level scope: other tenants' jobs simply do not exist for you.
+        job = store.get_job(user["tenant_id"], job_id)
+        if not job:
+            return _page_error(request, user, 404, "Job not found.")
         try:
-            envelope = research_company(
-                dict(previous), list(MODULES),
-                run_id=job_id, started_at=envelope_now(), offline=False, use_llm=True)
-            current = envelope["profile"]
-            changes = diff_profile(previous, current)
-            store.upsert_profile(user["tenant_id"], current)
-            # Idempotent: replaying the same snapshot records no duplicate change rows.
-            store.record_changes(user["tenant_id"], org, changes)
-            store.update_job(user["tenant_id"], job_id, "completed", f"{len(changes)} change(s)")
-        except Exception as exc:
-            logger.warning("refresh failed for org=%s error=%s", org, type(exc).__name__)
-            store.update_job(user["tenant_id"], job_id, "failed", type(exc).__name__)
-            return _page_error(request, user, 500,
-                               "Refresh failed; the previous supported value was preserved.")
-        return _redirect_with_session(f"/companies/{org}?msg=refreshed", user)
+            detail = json.loads(job.get("detail") or "{}")
+        except json.JSONDecodeError:
+            detail = {}
+        step_keys = [key for key, _label in JOB_STEPS]
+        current = str(detail.get("step") or "")
+        current_index = step_keys.index(current) if current in step_keys else -1
+        return templates.TemplateResponse(request, "job.html", {
+            "user": user, "csrf": _csrf_of(request), "job": job, "detail": detail,
+            "steps": JOB_STEPS, "org": detail.get("org", ""), "current_index": current_index,
+            "next_url": detail.get("next", "/"), "error": detail.get("error"),
+        })
 
     # --- authentication (rate-limited; session only in httpOnly cookie) ------
 
@@ -555,7 +582,7 @@ def _page_error(request: Request, user: dict | None, status: int, message: str):
 
 
 def _render_ready(profile: dict) -> dict:
-    """Attach claims, evidence rows, brief and status for the template layer."""
+    """Attach claims, evidence rows, brief, status, coverage and gate badge."""
     from norway_company_agent.batch import evidence_terminal_state
     from norway_company_agent.claims import build_claims
     from norway_company_agent.runner import harness_status
@@ -569,6 +596,28 @@ def _render_ready(profile: dict) -> dict:
     profile["_evidence_rows"] = rows
     profile["_brief"] = (synthesis.get("value") or {}).get("brief")
     profile["_status"] = harness_status(profile, states)
+
+    # Rubric-aligned coverage: which information families carry evidence?
+    def _has(field: str) -> bool:
+        return any(c["field"] == field and c["availability"] == "available" for c in claims)
+
+    families = [
+        ("Identity", _has("legal_name")),
+        ("Financials", _has("reporting_period")),
+        ("Leadership", _has("registered_role")),
+        ("Locations", _has("registered_subunit") or _has("registered_workforce")),
+        ("Website", _has("official_website")),
+        ("Hiring", _has("job_posting")),
+        ("News", _has("recent_activity")),
+    ]
+    done = sum(1 for _name, ok in families if ok)
+    profile["_coverage"] = {"done": done, "total": len(families),
+                            "families": [{"name": n, "ok": ok} for n, ok in families]}
+
+    # Exact-entity gate transparency (verification badge for the profile page)
+    website = (profile.get("evidence") or {}).get("website") or {}
+    gate = ((website.get("value") or {}).get("identity_assessment") or {})
+    profile["_identity_gate"] = gate if website.get("status") == "available" and gate else None
     return profile
 
 
@@ -596,6 +645,47 @@ def _start_session(user_row: dict, next_url: str = ""):
     resp = RedirectResponse(url=url, status_code=303)
     _set_session(resp, user)
     return resp
+
+
+JOB_STEPS = [
+    ("identity", "Resolve company identity"),
+    ("official", "Official registry, financials, roles, locations"),
+    ("website", "Website crawl + exact-entity gate"),
+    ("news", "Dated public activity"),
+    ("claims", "Claims & evidence assembly"),
+    ("synthesis", "Decision-useful brief"),
+]
+
+
+def _run_job(tenant_id: str, job_id: str, org: str, mode: str) -> None:
+    """Background worker: research or refresh one company for one tenant."""
+    next_url = f"/companies/{org}?msg={'refreshed' if mode == 'refresh' else 'researched'}"
+
+    def progress(step: str) -> None:
+        try:
+            store.update_job(tenant_id, job_id, "running",
+                             json.dumps({"org": org, "next": next_url, "step": step}))
+        except Exception:
+            pass
+
+    try:
+        previous = store.get_profile(tenant_id, org) if mode == "refresh" else None
+        profile = dict(previous) if previous else _seed_profile(org)
+        envelope = research_company(profile, list(MODULES), run_id=job_id,
+                                    started_at=envelope_now(), offline=False,
+                                    use_llm=True, progress=progress)
+        store.upsert_profile(tenant_id, envelope["profile"])
+        detail: dict = {"org": org, "next": next_url, "step": "done"}
+        if previous:
+            # Idempotent: replaying an unchanged snapshot records no new changes.
+            changes = diff_profile(previous, envelope["profile"])
+            store.record_changes(tenant_id, org, changes)
+            detail["changes"] = len(changes)
+        store.update_job(tenant_id, job_id, "completed", json.dumps(detail))
+    except Exception as exc:
+        logger.warning("job %s failed for org=%s error=%s", mode, org, type(exc).__name__)
+        store.update_job(tenant_id, job_id, "failed",
+                         json.dumps({"org": org, "next": next_url, "error": type(exc).__name__}))
 
 
 app = create_app()

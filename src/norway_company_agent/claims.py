@@ -214,6 +214,15 @@ def build_claims(profile: dict[str, Any]) -> tuple[list[dict[str, Any]], list[di
         group_id = register("ev-group", group)
         claims.append(_claim("group_structure", group.get("value"), "available", group_id, confidence=0.95))
 
+    # Workforce: official sum across registered subunits (0 or missing -> not_available)
+    workforce_total = sum(int(item.get("employees") or 0) for item in location_items)
+    if locations_availability == "available" and workforce_total > 0:
+        claims.append(_claim("registered_workforce", workforce_total, "available", locations_id, confidence=0.95))
+    else:
+        claims.append(_claim("registered_workforce", None,
+                             locations_availability if locations_availability != "available" else "not_available",
+                             locations_id, confidence=0.0))
+
     # --- Company website (identity-gated) ---
     website = ev.get("website") or {}
     website_availability = _availability(website)
@@ -277,6 +286,22 @@ def build_claims(profile: dict[str, Any]) -> tuple[list[dict[str, Any]], list[di
         for field in ("website_title", "company_description", "careers_page", "news_page",
                       "contact_phone", "contact_email", "registered_address"):
             claims.append(_claim(field, None, state, website_id, confidence=0.0))
+
+    # --- Job postings from the gated company careers page ---
+    careers = ev.get("careers") or {}
+    if careers.get("status") == "available":
+        for index, posting in enumerate((careers.get("value") or {}).get("postings") or []):
+            span_id = register(f"ev-careers-{index + 1}", careers, claim_span=str(posting.get("title"))[:200])
+            claims.append(_claim("job_posting", posting, "available", span_id, confidence=0.8))
+    elif careers:
+        careers_id = register("ev-careers", careers)
+        claims.append(_claim("job_posting", None, _availability(careers), careers_id, confidence=0.0))
+    else:
+        # Careers never ran: mirror the website gate state for this family.
+        website_state = "not_applicable"
+        if website:
+            website_state = "ambiguous" if website_availability == "available" else website_availability
+        claims.append(_claim("job_posting", None, website_state, website_id, confidence=0.0))
 
     # --- Dated public activity (news RSS, exact legal-name gate) ---
     news = ev.get("news") or {}

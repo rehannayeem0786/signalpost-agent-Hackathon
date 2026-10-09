@@ -49,6 +49,21 @@ Legend: ✅ done · 🔄 in progress · ⬜ planned. Dates in Oct 2026.
 - ✅ Verified `graphify query` / `god-nodes` (hubs: create_app, run_batch,
   fetch_website, utc_now, _csrf_of)
 
+## Phase 4b — Judge-facing product round ✅ (9 Oct)
+- ✅ Async research/refresh **jobs with live step-by-step progress** (zero-JS
+  meta-refresh polling) — `/jobs/{id}` page, tenant-scoped, BOLA-tested
+- ✅ **Coverage meter** (7 information families, rubric-aligned) + **exact-entity
+  gate badge** ("✓ verified · gate 0.95" / "site withheld by gate")
+- ✅ **One-click envelope export** `/companies/:org/envelope.json` (the exact
+  competition artifact — lets judges verify facts in seconds)
+- ✅ Landing hero + how-it-works + sample company quick-links (`/?org=` prefill, sanitized)
+- ✅ **Careers deep-crawl**: gated sites' careers pages → `job_posting` claims
+  (robots+SSRF guarded, pure extractor tested)
+- ✅ **Workforce claim**: official sum of subunit employees (`registered_workforce`)
+- ✅ Browser-friendly auth redirects (401→login with safe `next`, JSON for APIs)
+- ✅ Test suite now **168 passed**; live web checks: job 21.5 s / 25.8 s,
+  coverage+gate badges render, envelope export 31/43 claims
+
 ## Phase 6 — Submission ⬜
 - ✅ Final full test pass (149) + pip-audit re-run (0 vulns) + live uvicorn boot check
 - ✅ Git commit (v1) → **`a5dd848376e33044f261a74f29280578a574db18`** (120 files)
