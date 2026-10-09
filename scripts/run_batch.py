@@ -19,8 +19,12 @@ import json
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
+
+load_dotenv(ROOT / ".env")  # optional LLM keys / settings for synthesis
 
 from norway_company_agent.runner import DEFAULT_MODULES, run_batch  # noqa: E402
 

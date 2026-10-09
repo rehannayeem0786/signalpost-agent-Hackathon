@@ -22,6 +22,9 @@ from fastapi import FastAPI, Depends, Form, Request, Response, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from dotenv import load_dotenv
+
+load_dotenv()  # load .env from the repo root (never overrides existing env vars)
 
 from norway_company_agent.news import fetch_news  # noqa: F401 (kept for parity checks)
 from norway_company_agent.runner import research_company
@@ -377,7 +380,7 @@ def create_app() -> FastAPI:
     def account(request: Request, response: Response):
         user = require_user(request)
         _ensure_sid(response, request)
-        row = identity.find_by_email(_email_of(user)) or {}
+        row = identity.find_by_email(user.get("email") or "") or {}
         return templates.TemplateResponse(request, "account.html", {
             "user": user, "csrf": _csrf_of(request),
             "mfa_enabled": bool(row.get("mfa_enabled")),
