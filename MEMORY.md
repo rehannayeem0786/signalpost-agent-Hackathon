@@ -94,6 +94,8 @@ mismatch makes the run unofficial).
   `fetch_website()`, `run_batch()`, `_csrf_of()`. Rebuild after refactors with
   `graphify cluster-only . --no-label`; query with `graphify query "…"`.
   Docs need an LLM key (`--code-only` skips them).
-- **Pending:** final full test pass, git commit (v1 hash), submission email
-  (README checklist), then v2 work per §7.
+- **Pending:** submission email (README checklist), then v2 work per §7.
+- **v1 commit hash: `a5dd848376e33044f261a74f29280578a574db18`** (9 Oct 2026,
+  120 files). Submission must cite this exact hash; revisions are new hashes
+  (max 4 more, freeze 18 Oct).
 

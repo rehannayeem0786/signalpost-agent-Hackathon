@@ -50,11 +50,11 @@ Legend: ✅ done · 🔄 in progress · ⬜ planned. Dates in Oct 2026.
   fetch_website, utc_now, _csrf_of)
 
 ## Phase 6 — Submission ⬜
-- ⬜ Final full test pass + pip-audit re-run
-- ⬜ Git commit (v1) → record exact commit hash
+- ✅ Final full test pass (149) + pip-audit re-run (0 vulns) + live uvicorn boot check
+- ✅ Git commit (v1) → **`a5dd848376e33044f261a74f29280578a574db18`** (120 files)
 - ⬜ Email submit@builderr.ai: repo URL, commit, smoke report, run command,
-  models/APIs, expected cost
-- ⬜ v2 ideas ranked by expected recall gain (see MEMORY.md "Next moves")
+  models/APIs, expected cost (draft checklist in README)
+- ⬜ v2 ideas ranked by expected recall gain (see MEMORY.md §7)
 
 ## Revision budget (max 5 versions, revisions freeze 18 Oct)
 | Version | Planned content | Status |
