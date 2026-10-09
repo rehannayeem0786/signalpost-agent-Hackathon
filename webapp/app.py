@@ -16,9 +16,11 @@ import os
 import re
 import secrets
 import threading
+import urllib.parse
 from pathlib import Path
 
-from fastapi import FastAPI, Depends, Form, Request, Response, UploadFile, File
+from fastapi import FastAPI, Depends, Form, HTTPException, Request, Response, UploadFile, File
+from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -158,6 +160,17 @@ def _csrf_of(request: Request) -> str:
     return security.csrf_token_for(_sid_of(request))
 
 
+def _safe_next(url: str) -> str:
+    """Allow only same-site relative targets (blocks open redirects)."""
+    if url.startswith("/") and not url.startswith("//") and "\\" not in url and "\n" not in url:
+        return url
+    return "/"
+
+
+def _wants_html(request: Request) -> bool:
+    return "text/html" in request.headers.get("accept", "")
+
+
 def create_app() -> FastAPI:
     app = FastAPI(title="Signalpost company research", docs_url=None, redoc_url=None, openapi_url=None)
     app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
@@ -181,6 +194,27 @@ def create_app() -> FastAPI:
         if request.method == "OPTIONS" and origin and origin not in allowed:
             return JSONResponse(status_code=403, content={"detail": "origin not allowed"})
         return response
+
+    @app.exception_handler(HTTPException)
+    async def browser_friendly_auth(request: Request, exc: HTTPException):
+        """Browsers get pages; API clients keep JSON.
+
+        An anonymous form post or page visit (Accept: text/html) redirects to
+        the login page — returning to the original page after sign-in — while
+        scripts and API calls still receive the raw 401/403 JSON.
+        """
+        if _wants_html(request) and exc.status_code == 401:
+            here = request.url.path
+            if request.url.query:
+                here += "?" + request.url.query
+            return RedirectResponse(
+                url="/login?next=" + urllib.parse.quote(here, safe="/"), status_code=303)
+        if _wants_html(request) and exc.status_code == 403:
+            return templates.TemplateResponse(request, "error.html", {
+                "user": current_user(request), "csrf": _csrf_of(request),
+                "status": 403,
+                "message": "You do not have permission to view this page."}, status_code=403)
+        return await http_exception_handler(request, exc)
 
     @app.on_event("startup")
     def _startup() -> None:
@@ -296,26 +330,30 @@ def create_app() -> FastAPI:
     def login_page(request: Request, response: Response):
         _ensure_sid(response, request)
         return templates.TemplateResponse(request, "login.html", {
-            "user": current_user(request), "csrf": _csrf_of(request), "error": None})
+            "user": current_user(request), "csrf": _csrf_of(request), "error": None,
+            "next": _safe_next(request.query_params.get("next", ""))})
 
     @app.post("/login", response_class=HTMLResponse)
     def login(request: Request,
-              email: str = Form(...), password: str = Form(...), csrf: str = Form(default="")):
+              email: str = Form(...), password: str = Form(...), csrf: str = Form(default=""),
+              next: str = Form(default="")):
         _rate_limit(request, "login", 10, 60)  # credential stuffing brake
         check_csrf(request, csrf)
+        next_url = _safe_next(next)
         user_row = identity.authenticate(email, password)
         if not user_row:
             return templates.TemplateResponse(request, "login.html", {
-                "user": None, "csrf": _csrf_of(request),
-                "error": "Invalid credentials."}, status_code=401)
+                "user": None, "csrf": _csrf_of(request), "error": "Invalid credentials.",
+                "next": next_url}, status_code=401)
         if user_row["mfa_enabled"]:
             pending = security.issue_token(user_row["user_id"], user_row["tenant_id"], user_row["role"],
                                            expires_seconds=300, email=user_row["email"])
-            resp = RedirectResponse(url="/login/mfa", status_code=303)
+            resp = RedirectResponse(
+                url="/login/mfa?next=" + urllib.parse.quote(next_url, safe="/"), status_code=303)
             resp.set_cookie(PENDING_COOKIE, pending, httponly=True, samesite="strict",
                             secure=os.environ.get("WEBAPP_SECURE_COOKIES", "1") == "1", max_age=300, path="/")
             return resp
-        return _start_session(user_row)
+        return _start_session(user_row, next_url=next_url)
 
     @app.get("/login/mfa", response_class=HTMLResponse)
     def mfa_page(request: Request, response: Response):
@@ -323,12 +361,15 @@ def create_app() -> FastAPI:
         if not _decode_cookie(request, PENDING_COOKIE):
             return RedirectResponse(url="/login", status_code=303)
         return templates.TemplateResponse(request, "mfa.html", {
-            "user": None, "csrf": _csrf_of(request), "error": None})
+            "user": None, "csrf": _csrf_of(request), "error": None,
+            "next": _safe_next(request.query_params.get("next", ""))})
 
     @app.post("/login/mfa", response_class=HTMLResponse)
-    def mfa_verify(request: Request, code: str = Form(...), csrf: str = Form(default="")):
+    def mfa_verify(request: Request, code: str = Form(...), csrf: str = Form(default=""),
+                   next: str = Form(default="")):
         _rate_limit(request, "mfa", 10, 60)
         check_csrf(request, csrf)
+        next_url = _safe_next(next)
         pending_token = _decode_cookie(request, PENDING_COOKIE)
         payload = security.decode_token(pending_token) if pending_token else None
         if not payload:
@@ -337,9 +378,10 @@ def create_app() -> FastAPI:
         if not secret or not security.totp_verify(secret, code):
             return templates.TemplateResponse(request, "mfa.html", {
                 "user": None, "csrf": _csrf_of(request),
-                "error": "Invalid code."}, status_code=401)
+                "error": "Invalid code.", "next": next_url}, status_code=401)
         return _start_session({"user_id": payload["sub"], "tenant_id": payload.get("tenant"),
-                               "role": payload.get("role", "user"), "email": payload.get("email", "")})
+                               "role": payload.get("role", "user"), "email": payload.get("email", "")},
+                              next_url=next_url)
 
     @app.get("/register", response_class=HTMLResponse)
     def register_page(request: Request, response: Response):
@@ -540,14 +582,17 @@ def _redirect_with_session(url: str, user: dict):
     return resp
 
 
-def _start_session(user_row: dict):
+def _start_session(user_row: dict, next_url: str = ""):
     user = {
         "user_id": user_row.get("user_id") or user_row.get("sub"),
         "tenant_id": user_row.get("tenant_id") or user_row.get("tenant"),
         "role": user_row.get("role", "user"),
         "email": user_row.get("email", ""),
     }
-    url = "/account?msg=must-change" if user_row.get("must_change_password") else "/"
+    if user_row.get("must_change_password"):
+        url = "/account?msg=must-change"  # forced rotation wins over return-to
+    else:
+        url = _safe_next(next_url) or "/"
     resp = RedirectResponse(url=url, status_code=303)
     _set_session(resp, user)
     return resp

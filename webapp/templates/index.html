@@ -13,6 +13,10 @@
            placeholder="810034882" required maxlength="9">
     <p><button type="submit">Research company</button></p>
   </form>
+  {% if not user %}
+  <p class="muted">Research runs are saved to a workspace —
+     <a href="/login">sign in</a> or <a href="/register">register</a> to use the form.</p>
+  {% endif %}
 </div>
 
 <h2>Your profiles</h2>

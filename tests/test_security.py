@@ -370,4 +370,51 @@ def test_password_policy_enforced_endpoint():
     assert resp.status_code == 400
 
 
+# --- 17. Browser-friendly auth UX (redirects for HTML, JSON for APIs) --------
+
+def test_anonymous_browser_research_redirects_to_login():
+    resp = client.post("/research", data={"organisation_number": "810034882"},
+                       headers={"Accept": "text/html,application/xhtml+xml"})
+    assert resp.status_code == 303
+    assert resp.headers["location"].startswith("/login?next=")
+
+
+def test_anonymous_browser_page_visit_redirects_to_login():
+    resp = client.get("/companies/810034882",
+                      headers={"Accept": "text/html,application/xhtml+xml"})
+    assert resp.status_code == 303
+    assert resp.headers["location"].startswith("/login?next=")
+
+
+def test_anonymous_api_post_gets_json_401():
+    resp = client.post("/research", data={"organisation_number": "810034882"})
+    assert resp.status_code == 401
+    assert resp.json() == {"detail": "authentication required"}
+
+
+def test_login_next_roundtrip_and_open_redirect_blocked():
+    email = f"nx-{secrets.token_hex(4)}@example.com"
+    _register(email)
+    client.post("/logout", data={"csrf": security.csrf_token_for(client.cookies.get("sp_sid"))})
+    client.cookies.clear()
+    # login page receives the next target
+    resp = client.get("/login?next=/search")
+    assert 'name="next" value="/search"' in resp.text
+    # successful login returns to the target
+    sid = client.cookies.get("sp_sid")
+    resp = client.post("/login", data={"email": email, "password": "Str0ngPassphrase!",
+                                       "csrf": security.csrf_token_for(sid), "next": "/search"})
+    assert resp.status_code == 303
+    assert resp.headers["location"] == "/search"
+    # open-redirect attempts are neutralized to "/"
+    client.cookies.clear()
+    client.get("/login")
+    sid = client.cookies.get("sp_sid")
+    resp = client.post("/login", data={"email": email, "password": "Str0ngPassphrase!",
+                                       "csrf": security.csrf_token_for(sid),
+                                       "next": "//evil.example/steal"})
+    assert resp.status_code == 303
+    assert resp.headers["location"] == "/"
+
+
 

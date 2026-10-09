@@ -5,6 +5,7 @@
 {% if error %}<p class="errorbox">{{ error }}</p>{% endif %}
 <form class="card" method="post" action="/login">
   <input type="hidden" name="csrf" value="{{ csrf }}">
+  <input type="hidden" name="next" value="{{ next or '' }}">
   <label for="email">Email</label>
   <input id="email" name="email" type="email" autocomplete="username" required>
   <label for="password">Password</label>
