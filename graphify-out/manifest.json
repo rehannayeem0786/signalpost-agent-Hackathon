@@ -1,0 +1,464 @@
+{
+  "reports/dev/live-report.json": {
+    "mtime": 1791555271.7223034,
+    "seen": 1791558831.8318415,
+    "ast_hash": "93c804297976e5921530b30217e2aa19",
+    "semantic_hash": "93c804297976e5921530b30217e2aa19"
+  },
+  "reports/dev/test-report.json": {
+    "mtime": 1791555242.6562212,
+    "seen": 1791558831.8318415,
+    "ast_hash": "ac1f5c5845f2dd40c3d86cbbd83e0128",
+    "semantic_hash": "ac1f5c5845f2dd40c3d86cbbd83e0128"
+  },
+  "reports/dev/web-report.json": {
+    "mtime": 1791555586.8098433,
+    "seen": 1791558831.8318415,
+    "ast_hash": "6580315fd7507cc4b78cd8e1d9775a20",
+    "semantic_hash": "6580315fd7507cc4b78cd8e1d9775a20"
+  },
+  "reports/smoke-100/report.json": {
+    "mtime": 1791558015.415119,
+    "seen": 1791558831.8318415,
+    "ast_hash": "a608ab1c7e8013234a6e4a07ddfeea5f",
+    "semantic_hash": "a608ab1c7e8013234a6e4a07ddfeea5f"
+  },
+  "scripts/apply_identity_gate.py": {
+    "mtime": 1787569908.3696618,
+    "seen": 1791558831.8318415,
+    "ast_hash": "838dd828631a7802d1c5f6462fdec34e",
+    "semantic_hash": "838dd828631a7802d1c5f6462fdec34e"
+  },
+  "scripts/apply_verified_site_seeds.py": {
+    "mtime": 1787569908.3721058,
+    "seen": 1791558831.8318415,
+    "ast_hash": "4779f0cf912a73d73a003032f799261e",
+    "semantic_hash": "4779f0cf912a73d73a003032f799261e"
+  },
+  "scripts/ask_agent.py": {
+    "mtime": 1787569908.3748002,
+    "seen": 1791558831.8318415,
+    "ast_hash": "c78e728eaef2a71495345fd963e44648",
+    "semantic_hash": "c78e728eaef2a71495345fd963e44648"
+  },
+  "scripts/build_prototype.py": {
+    "mtime": 1787569908.376994,
+    "seen": 1791558831.8318415,
+    "ast_hash": "d837bbcffe8c5b44783ca6240e61c27e",
+    "semantic_hash": "d837bbcffe8c5b44783ca6240e61c27e"
+  },
+  "scripts/build_verified_observations.py": {
+    "mtime": 1787569908.3793685,
+    "seen": 1791558831.8318415,
+    "ast_hash": "f0ed5df9ab554cb94b4b21cfa17023c0",
+    "semantic_hash": "f0ed5df9ab554cb94b4b21cfa17023c0"
+  },
+  "scripts/diag_news.py": {
+    "mtime": 1791558048.2135665,
+    "seen": 1791558831.8318415,
+    "ast_hash": "ab66f50a55459c38dd10de15ce560f51",
+    "semantic_hash": "ab66f50a55459c38dd10de15ce560f51"
+  },
+  "scripts/diag_news_one.py": {
+    "mtime": 1791558074.7937274,
+    "seen": 1791558831.8318415,
+    "ast_hash": "9aeb9c58d0faeb283e11744abc976386",
+    "semantic_hash": "9aeb9c58d0faeb283e11744abc976386"
+  },
+  "scripts/diag_websites.py": {
+    "mtime": 1791555406.644965,
+    "seen": 1791558831.8318415,
+    "ast_hash": "cb296a526589bab8a11798d6256bfc75",
+    "semantic_hash": "cb296a526589bab8a11798d6256bfc75"
+  },
+  "scripts/discover_linkedin_company_profiles.py": {
+    "mtime": 1787569908.3821905,
+    "seen": 1791558831.8318415,
+    "ast_hash": "382c7285c5116af21b5ab726cd1acc08",
+    "semantic_hash": "382c7285c5116af21b5ab726cd1acc08"
+  },
+  "scripts/evaluate_external_footprint.py": {
+    "mtime": 1787569908.3842635,
+    "seen": 1791558831.8318415,
+    "ast_hash": "f394b1ab02cbcfd97dc61494fa236e46",
+    "semantic_hash": "f394b1ab02cbcfd97dc61494fa236e46"
+  },
+  "scripts/evaluate_research_agent.py": {
+    "mtime": 1787569908.3866482,
+    "seen": 1791558831.8318415,
+    "ast_hash": "c447356e93c9ce43e7716db4bffe71ed",
+    "semantic_hash": "c447356e93c9ce43e7716db4bffe71ed"
+  },
+  "scripts/extract_company_site_activity.py": {
+    "mtime": 1787569908.389255,
+    "seen": 1791558831.8318415,
+    "ast_hash": "14c6130a120030b5c1731d9d21e917d0",
+    "semantic_hash": "14c6130a120030b5c1731d9d21e917d0"
+  },
+  "scripts/extract_company_site_news.py": {
+    "mtime": 1787569908.3918862,
+    "seen": 1791558831.8318415,
+    "ast_hash": "72100c8890dc9692b710f9225e1cbfaf",
+    "semantic_hash": "72100c8890dc9692b710f9225e1cbfaf"
+  },
+  "scripts/gen_secrets.py": {
+    "mtime": 1791558215.7145376,
+    "seen": 1791558831.8318415,
+    "ast_hash": "e0bbbcd765cc8426348d0b6f309d9d0f",
+    "semantic_hash": "e0bbbcd765cc8426348d0b6f309d9d0f"
+  },
+  "scripts/normalize_google_maps_results.py": {
+    "mtime": 1787569908.3942616,
+    "seen": 1791558831.8318415,
+    "ast_hash": "247cfbdbe2f1d544de737870d3b8795b",
+    "semantic_hash": "247cfbdbe2f1d544de737870d3b8795b"
+  },
+  "scripts/normalize_social_links.py": {
+    "mtime": 1787569908.3963935,
+    "seen": 1791558831.8318415,
+    "ast_hash": "b647a00a4269c15c62d720d2115a1648",
+    "semantic_hash": "b647a00a4269c15c62d720d2115a1648"
+  },
+  "scripts/pick_web_orgs.py": {
+    "mtime": 1791555300.5952828,
+    "seen": 1791558831.8318415,
+    "ast_hash": "1cddb0e88a018299e48d54e82572d448",
+    "semantic_hash": "1cddb0e88a018299e48d54e82572d448"
+  },
+  "scripts/run_annual_report_workforce_connector.py": {
+    "mtime": 1787569908.3995657,
+    "seen": 1791558831.8318415,
+    "ast_hash": "dc8de4aac8c1f2624ac8222f5d7cd13f",
+    "semantic_hash": "dc8de4aac8c1f2624ac8222f5d7cd13f"
+  },
+  "scripts/run_batch.py": {
+    "mtime": 1791555221.4473455,
+    "seen": 1791558831.8318415,
+    "ast_hash": "093acc528f7f797f9e25cc7956441d57",
+    "semantic_hash": "093acc528f7f797f9e25cc7956441d57"
+  },
+  "scripts/run_brave_discovery.py": {
+    "mtime": 1787569908.4016745,
+    "seen": 1791558831.8318415,
+    "ast_hash": "633b37e5e25630f53b45ac45a863725f",
+    "semantic_hash": "633b37e5e25630f53b45ac45a863725f"
+  },
+  "scripts/run_competition_batch.py": {
+    "mtime": 1787569908.4042063,
+    "seen": 1791558831.8318415,
+    "ast_hash": "ef3b4f613584c9d884c79be149208cc7",
+    "semantic_hash": "ef3b4f613584c9d884c79be149208cc7"
+  },
+  "scripts/run_fagfolkguiden_reviews_connector.py": {
+    "mtime": 1787569908.4073312,
+    "seen": 1791558831.8318415,
+    "ast_hash": "541a70e79ed4e074a85d8e7fcd32b5ff",
+    "semantic_hash": "541a70e79ed4e074a85d8e7fcd32b5ff"
+  },
+  "scripts/run_google_news_rss_connector.py": {
+    "mtime": 1787569908.4094636,
+    "seen": 1791558831.8318415,
+    "ast_hash": "fa8741336b64aac9f6c475b4e05f8ca3",
+    "semantic_hash": "fa8741336b64aac9f6c475b4e05f8ca3"
+  },
+  "scripts/run_linkedin_guest_experiment.py": {
+    "mtime": 1787569908.4117703,
+    "seen": 1791558831.8318415,
+    "ast_hash": "6c4e02e2b892081874107cabe1bb9f5f",
+    "semantic_hash": "6c4e02e2b892081874107cabe1bb9f5f"
+  },
+  "scripts/run_linkedin_guest_jobs_connector.py": {
+    "mtime": 1787569908.4147701,
+    "seen": 1791558831.8318415,
+    "ast_hash": "50c1b58d1b4f1be299395488bebbdbe1",
+    "semantic_hash": "50c1b58d1b4f1be299395488bebbdbe1"
+  },
+  "scripts/run_refresh_replay.py": {
+    "mtime": 1787569908.417003,
+    "seen": 1791558831.8318415,
+    "ast_hash": "f7e50f38ea7aeead94af047ba805d3eb",
+    "semantic_hash": "f7e50f38ea7aeead94af047ba805d3eb"
+  },
+  "scripts/run_scrapy_websites.py": {
+    "mtime": 1787569908.4192724,
+    "seen": 1791558831.8318415,
+    "ast_hash": "95f73996c5797e3ec290c2371531af2e",
+    "semantic_hash": "95f73996c5797e3ec290c2371531af2e"
+  },
+  "scripts/run_sentiment_model.py": {
+    "mtime": 1787569908.4215815,
+    "seen": 1791558831.8318415,
+    "ast_hash": "be282f24495f4646ad91ca071fc50a78",
+    "semantic_hash": "be282f24495f4646ad91ca071fc50a78"
+  },
+  "scripts/run_youtube_search_connector.py": {
+    "mtime": 1787569908.4244785,
+    "seen": 1791558831.8318415,
+    "ast_hash": "9460cc5ba06de264d5339a1e270f3b79",
+    "semantic_hash": "9460cc5ba06de264d5339a1e270f3b79"
+  },
+  "scripts/score_company_completeness.py": {
+    "mtime": 1787569908.4267285,
+    "seen": 1791558831.8318415,
+    "ast_hash": "258cd8f3b0fb2bd208bc0cadb1043bd1",
+    "semantic_hash": "258cd8f3b0fb2bd208bc0cadb1043bd1"
+  },
+  "scripts/score_competition_v3.py": {
+    "mtime": 1787569908.4289768,
+    "seen": 1791558831.8318415,
+    "ast_hash": "50207eb4765d72f6c42101dfb2488f7d",
+    "semantic_hash": "50207eb4765d72f6c42101dfb2488f7d"
+  },
+  "select_entry_batch.py": {
+    "mtime": 1790490303.3887625,
+    "seen": 1791558831.8318415,
+    "ast_hash": "4b8a151511f1ba3a612f499e98c18a45",
+    "semantic_hash": "4b8a151511f1ba3a612f499e98c18a45"
+  },
+  "src/norway_company_agent/__init__.py": {
+    "mtime": 1787569908.3470101,
+    "seen": 1791558831.8318415,
+    "ast_hash": "080cbe155b86792c810f3d3705ac0df1",
+    "semantic_hash": "080cbe155b86792c810f3d3705ac0df1"
+  },
+  "src/norway_company_agent/batch.py": {
+    "mtime": 1787569908.3462384,
+    "seen": 1791558831.8318415,
+    "ast_hash": "310e2eac215325c9ce2ecddf1a7ecae4",
+    "semantic_hash": "310e2eac215325c9ce2ecddf1a7ecae4"
+  },
+  "src/norway_company_agent/claims.py": {
+    "mtime": 1791557649.4008188,
+    "seen": 1791558831.8318415,
+    "ast_hash": "08f338920b322f4050c552270d74aa6a",
+    "semantic_hash": "08f338920b322f4050c552270d74aa6a"
+  },
+  "src/norway_company_agent/crawl_events.py": {
+    "mtime": 1787569908.3464892,
+    "seen": 1791558831.8318415,
+    "ast_hash": "b39e68d0f4e9edfd3a7b2c201c924316",
+    "semantic_hash": "b39e68d0f4e9edfd3a7b2c201c924316"
+  },
+  "src/norway_company_agent/discovery.py": {
+    "mtime": 1787569908.3456168,
+    "seen": 1791558831.8318415,
+    "ast_hash": "4cb95828b24052bee6da0100669cbabb",
+    "semantic_hash": "4cb95828b24052bee6da0100669cbabb"
+  },
+  "src/norway_company_agent/evidence.py": {
+    "mtime": 1787569908.3572295,
+    "seen": 1791558831.8318415,
+    "ast_hash": "a297275c5726faf3cf526924cd7f2b34",
+    "semantic_hash": "a297275c5726faf3cf526924cd7f2b34"
+  },
+  "src/norway_company_agent/external_control.py": {
+    "mtime": 1787569908.3459744,
+    "seen": 1791558831.8318415,
+    "ast_hash": "ab946737be31ff2bb7fa79f1d8070ba3",
+    "semantic_hash": "ab946737be31ff2bb7fa79f1d8070ba3"
+  },
+  "src/norway_company_agent/external_footprint.py": {
+    "mtime": 1787569908.3567007,
+    "seen": 1791558831.8318415,
+    "ast_hash": "bacab4409c59786eddd8376b83f2b257",
+    "semantic_hash": "bacab4409c59786eddd8376b83f2b257"
+  },
+  "src/norway_company_agent/external_tasks.py": {
+    "mtime": 1787569908.344814,
+    "seen": 1791558831.8318415,
+    "ast_hash": "57381db4f800de8c204409410f0d79e7",
+    "semantic_hash": "57381db4f800de8c204409410f0d79e7"
+  },
+  "src/norway_company_agent/http.py": {
+    "mtime": 1787569908.354426,
+    "seen": 1791558831.8318415,
+    "ast_hash": "f2f0895cf3dcb12b5f449281846bf2fc",
+    "semantic_hash": "f2f0895cf3dcb12b5f449281846bf2fc"
+  },
+  "src/norway_company_agent/identity.py": {
+    "mtime": 1787569908.3569639,
+    "seen": 1791558831.8318415,
+    "ast_hash": "017a765bf32cf6ca2dc3c3ca64ee2ec7",
+    "semantic_hash": "017a765bf32cf6ca2dc3c3ca64ee2ec7"
+  },
+  "src/norway_company_agent/news.py": {
+    "mtime": 1791558119.9067438,
+    "seen": 1791558831.8318415,
+    "ast_hash": "a3c28de4dc8a469b7adc19db21decb73",
+    "semantic_hash": "a3c28de4dc8a469b7adc19db21decb73"
+  },
+  "src/norway_company_agent/official.py": {
+    "mtime": 1787569908.3557947,
+    "seen": 1791558831.8318415,
+    "ast_hash": "de9a5e4f29ab4417d7fc7bb8fdf46ff1",
+    "semantic_hash": "de9a5e4f29ab4417d7fc7bb8fdf46ff1"
+  },
+  "src/norway_company_agent/operations.py": {
+    "mtime": 1791554620.0984488,
+    "seen": 1791558831.8318415,
+    "ast_hash": "738531a459333c2b132d66f4ce0dff94",
+    "semantic_hash": "738531a459333c2b132d66f4ce0dff94"
+  },
+  "src/norway_company_agent/refresh.py": {
+    "mtime": 1787569908.354693,
+    "seen": 1791558831.8318415,
+    "ast_hash": "e9ba7af613d2a5d7cd7a5ed22b3c8277",
+    "semantic_hash": "e9ba7af613d2a5d7cd7a5ed22b3c8277"
+  },
+  "src/norway_company_agent/research.py": {
+    "mtime": 1787569908.34509,
+    "seen": 1791558831.8318415,
+    "ast_hash": "5b7650d64c7f8b2c4802eeac089f8f2e",
+    "semantic_hash": "5b7650d64c7f8b2c4802eeac089f8f2e"
+  },
+  "src/norway_company_agent/runner.py": {
+    "mtime": 1791557764.8627703,
+    "seen": 1791558831.8318415,
+    "ast_hash": "20a2b8958e2a829efe5d7c85b2d44422",
+    "semantic_hash": "20a2b8958e2a829efe5d7c85b2d44422"
+  },
+  "src/norway_company_agent/sampling.py": {
+    "mtime": 1787569908.3552296,
+    "seen": 1791558831.8318415,
+    "ast_hash": "99c7b7f7a3b3fe2e4345d0bf1d0f1cce",
+    "semantic_hash": "99c7b7f7a3b3fe2e4345d0bf1d0f1cce"
+  },
+  "src/norway_company_agent/scrapy_crawler.py": {
+    "mtime": 1787569908.3541782,
+    "seen": 1791558831.8318415,
+    "ast_hash": "3b69d904ce141e435cc5c45fb31819de",
+    "semantic_hash": "3b69d904ce141e435cc5c45fb31819de"
+  },
+  "src/norway_company_agent/sentiment.py": {
+    "mtime": 1787569908.3453462,
+    "seen": 1791558831.8318415,
+    "ast_hash": "3b96b2465893edda80753ff428c38b0e",
+    "semantic_hash": "3b96b2465893edda80753ff428c38b0e"
+  },
+  "src/norway_company_agent/snapshots.py": {
+    "mtime": 1787569908.3445234,
+    "seen": 1791558831.8318415,
+    "ast_hash": "b7033efd41ce67eeb6dd087bcf86c4f4",
+    "semantic_hash": "b7033efd41ce67eeb6dd087bcf86c4f4"
+  },
+  "src/norway_company_agent/store.py": {
+    "mtime": 1791554974.49822,
+    "seen": 1791558831.8318415,
+    "ast_hash": "689eb8ae44f33497b2ae1c809149eb5e",
+    "semantic_hash": "689eb8ae44f33497b2ae1c809149eb5e"
+  },
+  "src/norway_company_agent/synth.py": {
+    "mtime": 1791554913.8662078,
+    "seen": 1791558831.8318415,
+    "ast_hash": "0eac21e9f23d95894b2ec433e2d43209",
+    "semantic_hash": "0eac21e9f23d95894b2ec433e2d43209"
+  },
+  "src/norway_company_agent/universe.py": {
+    "mtime": 1791554684.8927846,
+    "seen": 1791558831.8318415,
+    "ast_hash": "cd9a5df3bd66c420f19c681b55bf1a4a",
+    "semantic_hash": "cd9a5df3bd66c420f19c681b55bf1a4a"
+  },
+  "src/norway_company_agent/website.py": {
+    "mtime": 1791557693.5243728,
+    "seen": 1791558831.8318415,
+    "ast_hash": "319871e329317d8a4a3970a9d3d9a356",
+    "semantic_hash": "319871e329317d8a4a3970a9d3d9a356"
+  },
+  "src/norway_company_agent/workspace.py": {
+    "mtime": 1787569908.3563905,
+    "seen": 1791558831.8318415,
+    "ast_hash": "d8343b131d19b7d1fe8499d3514453dd",
+    "semantic_hash": "d8343b131d19b7d1fe8499d3514453dd"
+  },
+  "tests/fixtures/refresh-snapshots.json": {
+    "mtime": 1787569908.364509,
+    "seen": 1791558831.8318415,
+    "ast_hash": "6a9d1e3701bbb6f74c8117cae3eb117f",
+    "semantic_hash": "6a9d1e3701bbb6f74c8117cae3eb117f"
+  },
+  "tests/fixtures/research-agent-suite-submission-1000.json": {
+    "mtime": 1787569908.3647983,
+    "seen": 1791558831.8318415,
+    "ast_hash": "c5664ed33acdc34436250ff7ca1c9584",
+    "semantic_hash": "c5664ed33acdc34436250ff7ca1c9584"
+  },
+  "tests/fixtures/research-agent-suite-v2-extension.json": {
+    "mtime": 1787569908.3650806,
+    "seen": 1791558831.8318415,
+    "ast_hash": "6e492aa19c816eb679954935bb573af8",
+    "semantic_hash": "6e492aa19c816eb679954935bb573af8"
+  },
+  "tests/fixtures/research-agent-suite-v2.json": {
+    "mtime": 1787569908.3653574,
+    "seen": 1791558831.8318415,
+    "ast_hash": "ff4016520e405620f2ffd6619aab97ab",
+    "semantic_hash": "ff4016520e405620f2ffd6619aab97ab"
+  },
+  "tests/fixtures/research-agent-suite-v3-fresh-extension.json": {
+    "mtime": 1787569908.3656285,
+    "seen": 1791558831.8318415,
+    "ast_hash": "f5e142eb706b53a41d972ff911d5f7cd",
+    "semantic_hash": "f5e142eb706b53a41d972ff911d5f7cd"
+  },
+  "tests/fixtures/research-agent-suite-v3-fresh.json": {
+    "mtime": 1787569908.3659022,
+    "seen": 1791558831.8318415,
+    "ast_hash": "5518bf028203f60163cc63b961ff4155",
+    "semantic_hash": "5518bf028203f60163cc63b961ff4155"
+  },
+  "tests/fixtures/research-agent-suite.json": {
+    "mtime": 1787569908.3661494,
+    "seen": 1791558831.8318415,
+    "ast_hash": "5deec3e332b5e1f2336072a7d8acc993",
+    "semantic_hash": "5deec3e332b5e1f2336072a7d8acc993"
+  },
+  "tests/test_contract.py": {
+    "mtime": 1791557181.173249,
+    "seen": 1791558831.8318415,
+    "ast_hash": "15bba2951036413d015ef73e23a469b5",
+    "semantic_hash": "15bba2951036413d015ef73e23a469b5"
+  },
+  "tests/test_news_gate.py": {
+    "mtime": 1791558166.2910154,
+    "seen": 1791558831.8318415,
+    "ast_hash": "7322116c490b3eb8278349b09ba65756",
+    "semantic_hash": "7322116c490b3eb8278349b09ba65756"
+  },
+  "tests/test_poc.py": {
+    "mtime": 1787569908.3598676,
+    "seen": 1791558831.8318415,
+    "ast_hash": "56bf7a0e84935a190275c7908a70a757",
+    "semantic_hash": "56bf7a0e84935a190275c7908a70a757"
+  },
+  "tests/test_security.py": {
+    "mtime": 1791556690.475264,
+    "seen": 1791558831.8318415,
+    "ast_hash": "bad826580b5d04c1481c47707c59c142",
+    "semantic_hash": "bad826580b5d04c1481c47707c59c142"
+  },
+  "webapp/__init__.py": {
+    "mtime": 1791556318.0079417,
+    "seen": 1791558831.8318415,
+    "ast_hash": "1955dcb7d1734be198b0c6fcc193b0db",
+    "semantic_hash": "1955dcb7d1734be198b0c6fcc193b0db"
+  },
+  "webapp/app.py": {
+    "mtime": 1791557104.0931635,
+    "seen": 1791558831.8318415,
+    "ast_hash": "5bd69b6ed456110d2e6d09d743324c01",
+    "semantic_hash": "5bd69b6ed456110d2e6d09d743324c01"
+  },
+  "webapp/db.py": {
+    "mtime": 1791556033.986133,
+    "seen": 1791558831.8318415,
+    "ast_hash": "b5ac5b9642cd339a10df1f65590dffe6",
+    "semantic_hash": "b5ac5b9642cd339a10df1f65590dffe6"
+  },
+  "webapp/security.py": {
+    "mtime": 1791557055.4619489,
+    "seen": 1791558831.8318415,
+    "ast_hash": "2a769ec8ebcea9e9ef9a0345677a8eac",
+    "semantic_hash": "2a769ec8ebcea9e9ef9a0345677a8eac"
+  }
+}

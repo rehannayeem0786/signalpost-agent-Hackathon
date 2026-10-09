@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Sign in — Signalpost{% endblock %}
+{% block content %}
+<h1>Sign in</h1>
+{% if error %}<p class="errorbox">{{ error }}</p>{% endif %}
+<form class="card" method="post" action="/login">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <label for="email">Email</label>
+  <input id="email" name="email" type="email" autocomplete="username" required>
+  <label for="password">Password</label>
+  <input id="password" name="password" type="password" autocomplete="current-password" required>
+  <p><button type="submit">Sign in</button></p>
+  <p class="muted">No account? <a href="/register">Register</a></p>
+</form>
+{% endblock %}

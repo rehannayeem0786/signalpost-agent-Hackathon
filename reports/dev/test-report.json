@@ -1,0 +1,75 @@
+{
+  "run_id": "dev-test-001",
+  "started_at": "2026-10-09T14:14:02.595335Z",
+  "completed_at": "2026-10-09T14:14:02.650711Z",
+  "expected_count": 3,
+  "emitted_envelopes": 3,
+  "resolved_profiles": 3,
+  "unresolved_organisation_numbers": [],
+  "timed_out_organisation_numbers": [],
+  "modules": [
+    "registry",
+    "accounting_obligation",
+    "registry_live",
+    "financials",
+    "financial_history",
+    "roles",
+    "group",
+    "locations",
+    "website",
+    "news"
+  ],
+  "offline": true,
+  "llm_enabled": false,
+  "registry": {
+    "registry_snapshot_sha256": "1c89710e5b01f8617e86d09fbdff4a52f2f8dbbba297e74f7164b5984f5a0384",
+    "registry_rows_scanned": 3,
+    "requested": 3,
+    "selected": 3,
+    "missing_organisation_numbers": []
+  },
+  "status_counts": {
+    "available": 3
+  },
+  "available_claim_counts": {
+    "legal_name": 3,
+    "organisation_number": 3,
+    "legal_form": 3,
+    "municipality": 3,
+    "municipality_number": 3,
+    "industry_code": 3,
+    "industry_label": 3,
+    "latest_submitted_accounts": 3,
+    "is_bankrupt": 3,
+    "is_liquidating": 3,
+    "accounting_obligation": 3,
+    "employees": 1
+  },
+  "operations": {
+    "wall_seconds": 0.062,
+    "p50_ms": null,
+    "p95_ms": null,
+    "third_party_cost_usd": 0.0
+  },
+  "validation": {
+    "passed": true,
+    "starter": {
+      "passed": true,
+      "checks": {
+        "exact_expected_count": true,
+        "unique_organisation_numbers": true,
+        "all_entity_states_terminal": true,
+        "all_module_states_terminal": true,
+        "zero_silent_drops": true
+      },
+      "invalid_states": []
+    },
+    "harness": {
+      "one_envelope_per_input": true,
+      "all_harness_states_legal": true,
+      "every_claim_has_evidence": true,
+      "no_zero_for_missing": true,
+      "identity_present_everywhere": true
+    }
+  }
+}

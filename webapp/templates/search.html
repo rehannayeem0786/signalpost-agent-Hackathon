@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Search — Signalpost{% endblock %}
+{% block content %}
+<h1>Search your profiles</h1>
+<form class="card" method="get" action="/search">
+  <label for="q">Organisation number</label>
+  <input id="q" name="q" type="search" value="{{ query }}" placeholder="810034882">
+  <p><button type="submit">Search</button></p>
+</form>
+{% if matches %}
+<table>
+  <tr><th>Organisation number</th><th>Updated</th></tr>
+  {% for row in matches %}
+  <tr><td><a class="mono" href="/companies/{{ row.organisation_number }}">{{ row.organisation_number }}</a></td>
+      <td class="muted">{{ row.updated_at }}</td></tr>
+  {% endfor %}
+</table>
+{% elif query %}
+<p class="muted">No match in your workspace.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Admin — Signalpost{% endblock %}
+{% block content %}
+<h1>Administration</h1>
+{% if message %}<p class="flash">{{ message }}</p>{% endif %}
+
+<div class="card">
+  <h2 style="margin-top:0">Users in this tenant</h2>
+  <table>
+    <tr><th>Email</th><th>Role</th><th>MFA</th></tr>
+    {% for u in users %}
+    <tr><td>{{ u.email }}</td><td>{{ u.role }}</td>
+        <td><span class="badge {{ 'available' if u.mfa_enabled else 'not_available' }}">{{ 'on' if u.mfa_enabled else 'off' }}</span></td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Upload smoke-test report</h2>
+  <p class="muted">Accepted: .json, .jsonl, .txt, .csv · max 2 MB · content-validated before write.</p>
+  <form method="post" action="/admin/upload" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <input type="file" name="file" required>
+    <p><button type="submit">Upload</button></p>
+  </form>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">URL preview (SSRF-guarded)</h2>
+  <form method="post" action="/admin/preview-url">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label for="url">URL</label>
+    <input id="url" name="url" type="text" placeholder="https://example.com" required>
+    <p><button type="submit">Check</button></p>
+  </form>
+</div>
+{% endblock %}

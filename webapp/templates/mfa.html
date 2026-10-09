@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Two-factor code — Signalpost{% endblock %}
+{% block content %}
+<h1>Enter your two-factor code</h1>
+{% if error %}<p class="errorbox">{{ error }}</p>{% endif %}
+<form class="card" method="post" action="/login/mfa">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <label for="code">Authenticator code</label>
+  <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" required>
+  <p><button type="submit">Verify</button></p>
+</form>
+{% endblock %}

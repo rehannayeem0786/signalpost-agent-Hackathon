@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Account — Signalpost{% endblock %}
+{% block content %}
+<h1>Account</h1>
+{% if message == 'must-change' %}<p class="errorbox">Your initial password must be changed now.</p>{% endif %}
+{% if message %}{% if message != 'must-change' %}<p class="flash">{{ message }}</p>{% endif %}{% endif %}
+
+<div class="card">
+  <strong>Signed in as</strong> {{ user.email }} · role {{ user.role }}
+  <p class="muted">Two-factor authentication: {% if mfa_enabled %}<span class="badge available">enabled</span>{% else %}<span class="badge not_available">disabled</span>{% endif %}</p>
+  {% if not mfa_enabled %}
+  <form method="post" action="/account/mfa/setup">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <button type="submit">Enable MFA</button>
+  </form>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Change password</h2>
+  <form method="post" action="/account/password">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label for="current">Current password</label>
+    <input id="current" name="current_password" type="password" autocomplete="current-password" required>
+    <label for="new">New password (12+ chars, upper, lower, digit)</label>
+    <input id="new" name="new_password" type="password" autocomplete="new-password" required>
+    <p><button type="submit">Update password</button></p>
+  </form>
+</div>
+{% endblock %}

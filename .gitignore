@@ -1,0 +1,29 @@
+﻿# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Large data (downloaded, not committed)
+data/
+*.jsonl.gz
+brreg-enheter.csv
+signalpost-company-universe-2025.jsonl.gz
+signalpost-starter-kit.tar.gz
+
+# Reference starter kit (not our code)
+signalpost-starter-kit/
+tools/
+
+# Runtime outputs (smoke reports are committed under reports/)
+out/
+*.log
+
+# Secrets
+.env
+
+# OS
+Thumbs.db
+._*
+
+graphify-out/cache/

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Error {{ status }} — Signalpost{% endblock %}
+{% block content %}
+<h1>Error {{ status }}</h1>
+<p class="errorbox">{{ message }}</p>
+<p><a href="/">Back to workspace</a></p>
+{% endblock %}

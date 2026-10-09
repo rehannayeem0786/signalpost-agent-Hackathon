@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Workspace — Signalpost{% endblock %}
+{% block content %}
+<h1>Company research workspace</h1>
+<p class="sub">Give it a Norwegian organisation number. It returns facts, links each fact to a source,
+   and keeps the profile current.</p>
+
+<div class="card">
+  <form method="post" action="/research">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label for="org">Organisation number (9 digits)</label>
+    <input id="org" name="organisation_number" type="text" inputmode="numeric" pattern="\d{9}"
+           placeholder="810034882" required maxlength="9">
+    <p><button type="submit">Research company</button></p>
+  </form>
+</div>
+
+<h2>Your profiles</h2>
+{% if user and recent %}
+<table>
+  <tr><th>Organisation number</th><th>Snapshot</th><th>Updated</th></tr>
+  {% for row in recent %}
+  <tr>
+    <td><a href="/companies/{{ row.organisation_number }}" class="mono">{{ row.organisation_number }}</a></td>
+    <td class="mono">{{ row.content_sha256[:12] }}…</td>
+    <td class="muted">{{ row.updated_at }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% elif user %}
+<p class="muted">No profiles yet — research your first company above.</p>
+{% else %}
+<p class="muted"><a href="/login">Sign in</a> to research and store company profiles.</p>
+{% endif %}
+{% endblock %}

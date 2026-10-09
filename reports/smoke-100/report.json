@@ -1,0 +1,98 @@
+{
+  "run_id": "smoke-002",
+  "started_at": "2026-10-09T14:56:29.650179Z",
+  "completed_at": "2026-10-09T15:00:15.383383Z",
+  "expected_count": 100,
+  "emitted_envelopes": 100,
+  "resolved_profiles": 100,
+  "unresolved_organisation_numbers": [],
+  "timed_out_organisation_numbers": [],
+  "modules": [
+    "registry",
+    "accounting_obligation",
+    "registry_live",
+    "financials",
+    "financial_history",
+    "roles",
+    "group",
+    "locations",
+    "website",
+    "news"
+  ],
+  "offline": false,
+  "llm_enabled": true,
+  "registry": {
+    "registry_snapshot_sha256": "1c89710e5b01f8617e86d09fbdff4a52f2f8dbbba297e74f7164b5984f5a0384",
+    "registry_rows_scanned": 409260,
+    "requested": 100,
+    "selected": 100,
+    "missing_organisation_numbers": []
+  },
+  "status_counts": {
+    "available": 100
+  },
+  "available_claim_counts": {
+    "registered_role": 386,
+    "legal_name": 100,
+    "organisation_number": 100,
+    "legal_form": 100,
+    "municipality": 100,
+    "municipality_number": 100,
+    "industry_code": 100,
+    "industry_label": 100,
+    "latest_submitted_accounts": 100,
+    "is_bankrupt": 100,
+    "is_liquidating": 100,
+    "accounting_obligation": 100,
+    "annual_result": 100,
+    "total_assets": 100,
+    "equity": 100,
+    "reporting_period": 100,
+    "available_filing_years": 100,
+    "company_brief": 100,
+    "operating_result": 98,
+    "total_debt": 98,
+    "registered_subunit": 76,
+    "revenue": 71,
+    "official_website": 11,
+    "website_title": 11,
+    "employees": 10,
+    "group_structure": 8,
+    "registry_website": 7,
+    "company_description": 7,
+    "social_profile_facebook": 3,
+    "news_page": 2,
+    "contact_email": 2,
+    "social_profile_instagram": 2,
+    "contact_phone": 1,
+    "social_profile_linkedin": 1
+  },
+  "operations": {
+    "wall_seconds": 225.766,
+    "requests_total": 846,
+    "p50_ms": 19984,
+    "p95_ms": 41264,
+    "third_party_cost_usd": 0.0
+  },
+  "validation": {
+    "passed": true,
+    "starter": {
+      "passed": true,
+      "checks": {
+        "exact_expected_count": true,
+        "unique_organisation_numbers": true,
+        "all_entity_states_terminal": true,
+        "all_module_states_terminal": true,
+        "zero_silent_drops": true
+      },
+      "invalid_states": []
+    },
+    "harness": {
+      "one_envelope_per_input": true,
+      "all_harness_states_legal": true,
+      "every_claim_has_evidence": true,
+      "no_zero_for_missing": true,
+      "identity_present_everywhere": true
+    }
+  }
+}

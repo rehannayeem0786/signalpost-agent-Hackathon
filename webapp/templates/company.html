@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.name or profile.organisation_number }} — Signalpost{% endblock %}
+{% macro src(ev) %}
+  {% for eid in ev %}
+    {% set row = (profile._evidence_rows or []) | selectattr("id", "equalto", eid) | first %}
+    {% if row %}
+      <span class="src">
+        {% if row.source_url %}<a href="{{ row.source_url }}" rel="noopener noreferrer">{{ row.source_class }}</a>{% else %}{{ row.source_class }}{% endif %}
+        · retrieved {{ row.retrieved_at or "—" }}{% if row.reporting_period %} · period {{ row.reporting_period }}{% endif %}
+        {% if row.content_sha256 %} · <span class="mono">{{ row.content_sha256[:12] }}…</span>{% endif %}
+      </span><br>
+    {% endif %}
+  {% endfor %}
+{% endmacro %}
+{% block content %}
+<h1>{{ profile.name or "Unnamed entity" }}</h1>
+<p class="sub">Org. nr. <span class="mono">{{ profile.organisation_number }}</span>
+  {% if profile.legal_form %} · {{ profile.legal_form }}{% endif %}
+  {% if profile.municipality %} · {{ profile.municipality }}{% endif %}
+  <span class="badge {{ profile._status or 'available' }}">{{ profile._status or 'available' }}</span></p>
+
+{% if profile._brief %}
+<div class="card"><strong>Decision-useful brief</strong><p>{{ profile._brief }}</p></div>
+{% endif %}
+
+<h2>Company brief</h2>
+<table>
+  <tr><th>Fact</th><th>Value</th><th>State</th><th>Evidence</th></tr>
+  {% for c in profile._claims %}
+    {% if c.field in ("legal_name","organisation_number","legal_form","municipality","industry_label","industry_code","employees","business_address","registry_website","company_description","website_title","official_website","contact_phone","contact_email","founding_date","social_profile_facebook","social_profile_linkedin","social_profile_youtube","social_profile_x","social_profile_instagram") %}
+    <tr>
+      <td>{{ c.field }}</td>
+      <td>{% if c.value is not none %}{{ c.value }}{% else %}<em>not available</em>{% endif %}</td>
+      <td><span class="badge {{ c.availability }}">{{ c.availability }}</span></td>
+      <td>{{ src(c.evidence_ids) }}</td>
+    </tr>
+    {% endif %}
+  {% endfor %}
+</table>
+
+<h2>Latest financials</h2>
+<table>
+  <tr><th>Metric</th><th>Value</th><th>Period</th><th>State</th><th>Evidence</th></tr>
+  {% for c in profile._claims %}
+    {% if c.field in ("revenue","operating_result","annual_result","total_assets","total_debt","equity","reporting_period","available_filing_years","accounting_obligation") %}
+    <tr>
+      <td>{{ c.field }}</td>
+      <td>{% if c.value is not none %}{{ c.value }}{% else %}<em>not available</em>{% endif %}</td>
+      <td>{{ c.reporting_period or "—" }}</td>
+      <td><span class="badge {{ c.availability }}">{{ c.availability }}</span></td>
+      <td>{{ src(c.evidence_ids) }}</td>
+    </tr>
+    {% endif %}
+  {% endfor %}
+</table>
+
+<h2>Who runs it?</h2>
+{% set roles = profile._claims | selectattr("field", "equalto", "registered_role") | list %}
+{% if roles %}
+<table>
+  <tr><th>Role</th><th>Person</th><th>From</th><th>State</th><th>Evidence</th></tr>
+  {% for c in roles %}
+  <tr>
+    <td>{{ c.value.role or c.value.group or "role" }}</td>
+    <td>{{ c.value.name or "—" }}</td>
+    <td>{{ c.value.from_date or "—" }}</td>
+    <td><span class="badge {{ c.availability }}">{{ c.availability }}</span></td>
+    <td>{{ src(c.evidence_ids) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">No registered role records.</p>{% endif %}
+
+<h2>Working here</h2>
+{% set subs = profile._claims | selectattr("field", "equalto", "registered_subunit") | list %}
+<table>
+  <tr><th>Item</th><th>Value</th><th>State</th><th>Evidence</th></tr>
+  {% for c in profile._claims if c.field in ("careers_page","news_page") %}
+  <tr><td>{{ c.field }}</td><td>{% if c.value %}<a href="{{ c.value }}" rel="noopener noreferrer">{{ c.value }}</a>{% else %}<em>not available</em>{% endif %}</td>
+      <td><span class="badge {{ c.availability }}">{{ c.availability }}</span></td><td>{{ src(c.evidence_ids) }}</td></tr>
+  {% endfor %}
+  {% for c in subs %}
+  <tr><td>registered_subunit</td><td>{{ c.value.name }} — {{ c.value.address }}</td>
+      <td><span class="badge {{ c.availability }}">{{ c.availability }}</span></td><td>{{ src(c.evidence_ids) }}</td></tr>
+  {% endfor %}
+</table>
+
+<h2>Recent activity</h2>
+{% set acts = profile._claims | selectattr("field", "equalto", "recent_activity") | list %}
+{% if acts %}
+<table>
+  <tr><th>Headline</th><th>Publisher</th><th>Published</th><th>Evidence</th></tr>
+  {% for c in acts %}
+  <tr>
+    <td>{% if c.value.url %}<a href="{{ c.value.url }}" rel="noopener noreferrer">{{ c.value.title }}</a>{% else %}{{ c.value.title }}{% endif %}</td>
+    <td>{{ c.value.publisher }}</td>
+    <td>{{ c.value.published_at or "—" }}</td>
+    <td>{{ src(c.evidence_ids) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">No dated public mention passed the exact legal-name gate.</p>{% endif %}
+
+{% if changes %}
+<h2>Changes on last refresh</h2>
+<ul class="changes">
+  {% for ch in changes %}
+  <li><span class="mono">{{ ch.field }}</span>: {{ ch.old_value }} → {{ ch.new_value }} <span class="muted">({{ ch.detected_at }})</span></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<div class="actions card">
+  <form method="post" action="/refresh" class="inline">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <input type="hidden" name="organisation_number" value="{{ profile.organisation_number }}">
+    <button type="submit">Refresh profile</button>
+  </form>
+  <a href="/research-form">Research another company</a>
+</div>
+{% endblock %}
