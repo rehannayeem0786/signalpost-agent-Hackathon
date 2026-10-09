@@ -88,6 +88,9 @@ def test_research_job_flow_and_profile_page(monkeypatch):
     assert "Coverage:" in profile.text
     assert "information families" in profile.text
     assert "Download envelope JSON" in profile.text
+    # meter is class-based (no template expressions inside CSS contexts)
+    assert 'class="fill lvl-' in profile.text
+    assert 'style="width:' not in profile.text
 
 
 def test_job_page_rejects_other_tenant(monkeypatch):

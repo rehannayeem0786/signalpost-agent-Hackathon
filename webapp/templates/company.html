@@ -29,7 +29,10 @@
     {% endif %}
     <a class="btn" href="/companies/{{ profile.organisation_number }}/envelope.json">⤓ Download envelope JSON</a>
   </div>
-  <div class="meter"><span style="width: {{ (profile._coverage.done * 100 // profile._coverage.total) }}%"></span></div>
+  <div class="meter" role="img"
+       aria-label="Coverage {{ profile._coverage.done }} of {{ profile._coverage.total }} information families">
+    <span class="fill lvl-{{ profile._coverage.level }}"></span>
+  </div>
   <div class="chips">
     {% for f in profile._coverage.families %}
       <span class="chip {{ 'ok' if f.ok else 'off' }}">{{ '✓' if f.ok else '—' }} {{ f.name }}</span>

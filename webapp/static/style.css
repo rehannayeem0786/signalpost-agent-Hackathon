@@ -63,7 +63,17 @@ form.card { max-width: 460px; }
 .stepcard strong { display: block; color: #fff; margin-bottom: 4px; }
 .samples { font-size: .9rem; margin: 8px 0 0; }
 .meter { background: #e6edf4; border-radius: 999px; height: 12px; margin: 10px 0 8px; overflow: hidden; }
-.meter span { display: block; height: 100%; background: linear-gradient(90deg, #0e7a45, #16a34a); border-radius: 999px; }
+.meter .fill { display: block; height: 100%;
+               background: linear-gradient(90deg, #0e7a45, #16a34a); border-radius: 999px; }
+/* width per coverage level (7 information families); no template in CSS */
+.meter .fill.lvl-0 { width: 0; }
+.meter .fill.lvl-1 { width: 14.28%; }
+.meter .fill.lvl-2 { width: 28.56%; }
+.meter .fill.lvl-3 { width: 42.84%; }
+.meter .fill.lvl-4 { width: 57.12%; }
+.meter .fill.lvl-5 { width: 71.4%; }
+.meter .fill.lvl-6 { width: 85.68%; }
+.meter .fill.lvl-7 { width: 100%; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font-size: .78rem; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
 .chip.ok { background: #e3f5ec; border-color: #b7e4cd; color: var(--ok); }

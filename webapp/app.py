@@ -611,8 +611,12 @@ def _render_ready(profile: dict) -> dict:
         ("News", _has("recent_activity")),
     ]
     done = sum(1 for _name, ok in families if ok)
-    profile["_coverage"] = {"done": done, "total": len(families),
-                            "families": [{"name": n, "ok": ok} for n, ok in families]}
+    profile["_coverage"] = {
+        "done": done,
+        "total": len(families),
+        "level": min(int(done), len(families)),  # drives the .fill.lvl-N meter class
+        "families": [{"name": n, "ok": ok} for n, ok in families],
+    }
 
     # Exact-entity gate transparency (verification badge for the profile page)
     website = (profile.get("evidence") or {}).get("website") or {}
