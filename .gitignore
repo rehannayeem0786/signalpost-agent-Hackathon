@@ -27,3 +27,7 @@ Thumbs.db
 ._*
 
 graphify-out/cache/
+
+# Internal docs stay local - judges only see README.md
+*.md
+!README.md
