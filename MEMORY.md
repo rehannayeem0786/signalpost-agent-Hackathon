@@ -19,7 +19,16 @@ mismatch makes the run unofficial).
 
 - Windows 11, PowerShell; Python 3.11.9 system + **3.12.14** via `py -V:3.12` (starter needs 3.12+)
 - `uv 0.12.13`, `git 2.53`, `node v24` available; venv at `.venv`
-- BRREG API reachable; **no GROQ/OPENROUTER keys set in env** → LLM must stay optional
+- BRREG API reachable
+- **.env now carries REAL keys**: `GROQ_API_KEY` (gsk_…) + `OPENROUTER_API_KEY` (sk-or-…),
+  `LLM_PROVIDER=groq, openrouter` (preference list, comma-separated — supported
+  since commit below). Model defaults: Groq `openai/gpt-oss-120b` → `qwen/qwen3.8-27b`
+  → `llama-3.3-70b-versatile`; OpenRouter `meta-llama/llama-3.3-70b-instruct`.
+  **Measured**: ~$0.0007–0.0027/company (5-company live run: $0.0067 total);
+  Groq `gpt-oss-120b` hit transient failures on 3/5 calls → qwen fallback
+  worked automatically. Model catalogs rotate — that's why candidates are lists.
+  Probe tools: `scripts/probe_llm.py`, `scripts/check_llm_live.py`,
+  `scripts/diag_synthesis.py`.
 - Universe file at `data/signalpost-company-universe-2025.jsonl.gz`, SHA-256
   matches the contract (`1c89710e5b01f8617e86d09fbdff4a52f2f8dbbba297e74f7164b5984f5a0384`)
 

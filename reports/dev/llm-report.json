@@ -1,0 +1,95 @@
+{
+  "run_id": "dev-llm-001",
+  "started_at": "2026-10-09T16:14:52.293528Z",
+  "completed_at": "2026-10-09T16:15:23.069675Z",
+  "expected_count": 5,
+  "emitted_envelopes": 5,
+  "resolved_profiles": 5,
+  "unresolved_organisation_numbers": [],
+  "timed_out_organisation_numbers": [],
+  "modules": [
+    "registry",
+    "accounting_obligation",
+    "registry_live",
+    "financials",
+    "financial_history",
+    "roles",
+    "group",
+    "locations",
+    "website",
+    "news"
+  ],
+  "offline": false,
+  "llm_enabled": true,
+  "registry": {
+    "registry_snapshot_sha256": "1c89710e5b01f8617e86d09fbdff4a52f2f8dbbba297e74f7164b5984f5a0384",
+    "registry_rows_scanned": 26,
+    "requested": 5,
+    "selected": 5,
+    "missing_organisation_numbers": []
+  },
+  "status_counts": {
+    "available": 5
+  },
+  "available_claim_counts": {
+    "registered_role": 19,
+    "legal_name": 5,
+    "organisation_number": 5,
+    "legal_form": 5,
+    "municipality": 5,
+    "municipality_number": 5,
+    "industry_code": 5,
+    "industry_label": 5,
+    "registry_website": 5,
+    "latest_submitted_accounts": 5,
+    "is_bankrupt": 5,
+    "is_liquidating": 5,
+    "accounting_obligation": 5,
+    "operating_result": 5,
+    "annual_result": 5,
+    "total_assets": 5,
+    "total_debt": 5,
+    "equity": 5,
+    "reporting_period": 5,
+    "available_filing_years": 5,
+    "company_brief": 5,
+    "registered_subunit": 5,
+    "revenue": 4,
+    "official_website": 2,
+    "website_title": 2,
+    "employees": 2,
+    "company_description": 1,
+    "social_profile_facebook": 1,
+    "social_profile_youtube": 1,
+    "news_page": 1,
+    "group_structure": 1
+  },
+  "operations": {
+    "wall_seconds": 30.797,
+    "requests_total": 69,
+    "p50_ms": 23140,
+    "p95_ms": 30703,
+    "third_party_cost_usd": 0.006655
+  },
+  "validation": {
+    "passed": true,
+    "starter": {
+      "passed": true,
+      "checks": {
+        "exact_expected_count": true,
+        "unique_organisation_numbers": true,
+        "all_entity_states_terminal": true,
+        "all_module_states_terminal": true,
+        "zero_silent_drops": true
+      },
+      "invalid_states": []
+    },
+    "harness": {
+      "one_envelope_per_input": true,
+      "all_harness_states_legal": true,
+      "every_claim_has_evidence": true,
+      "no_zero_for_missing": true,
+      "identity_present_everywhere": true
+    }
+  }
+}
